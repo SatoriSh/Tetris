@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace Tetris
 {
@@ -19,13 +13,13 @@ namespace Tetris
         {
             this.height = height; this.width = width;
         }
-        internal void setCell(Cell cell)
-        {
-            this.cell = cell;
-        }
+
+        internal void setCell(Cell cell) => this.cell = cell;
+
         internal void Draw()
         {
             Console.SetCursorPosition(0, 0);
+
             for (int i = 0; i < height; i++)
             {
                 for (int j = 0; j < width; j++)
@@ -35,7 +29,7 @@ namespace Tetris
                     else
                         Console.ForegroundColor = ConsoleColor.Black;
 
-                    cell.drawCell(cell.GetCell(i,j));
+                    cell.drawCell(cell.cells[i, j]);
                 }
                 Console.Write("\n");
             }
@@ -87,9 +81,43 @@ namespace Tetris
             }
         }
 
-        internal Cell GetCell(int x, int y)
+        internal void CreateBlock(int x, int y)
         {
-            return cells[x, y];
+            cells[x, y].isBlock = true;
+            Move(x, y);
+        }
+
+        internal void Move(int x, int y)
+        {
+            while (!cells[x+1, y].isBorder && !cells[x+1, y].isBlock)
+            {
+                cells[x, y].isBlock = false;
+                cells[++x, y].isBlock = true;
+                board.Draw();
+
+                if (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.RightArrow && !cells[x, y + 1].isBorder && !cells[x, y + 1].isBlock)
+                    {
+                        cells[x, y].isBlock = false;
+                        y++;
+                    }
+                    if (key.Key == ConsoleKey.LeftArrow && !cells[x, y - 1].isBorder && !cells[x, y - 1].isBlock)
+                    {
+                        cells[x, y].isBlock = false;
+                        y--;
+                    }
+                    if (key.Key == ConsoleKey.DownArrow && !cells[x+1, y].isBorder && !cells[x+1, y].isBlock)
+                    {
+                        cells[x, y].isBlock = false;
+                        x++;
+                    }
+                }
+
+                Thread.Sleep(40);
+            }
+            
         }
     }
 
@@ -100,6 +128,7 @@ namespace Tetris
             Board board = new Board(25, 10);
             Cell cell = new Cell(board, "[*]", false);
             board.setCell(cell);
+
             cell.initialiseCells();
             
             Console.CursorVisible = false;
@@ -108,12 +137,12 @@ namespace Tetris
             {
                 board.Draw();
                 Thread.Sleep(10);
-
-                var key = Console.ReadKey(true);
-                if (key.Key == ConsoleKey.W)
-                {
-                    cell.cells[2, 2].isBlock = true;
-                }
+                cell.CreateBlock(2, 1);
+                cell.CreateBlock(2, 2);
+                cell.CreateBlock(2, 3);
+                cell.CreateBlock(2, 4);
+                cell.CreateBlock(2, 5);
+                cell.CreateBlock(2, 6);
             }
         }
     }
