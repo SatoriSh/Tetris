@@ -133,16 +133,19 @@ namespace Tetris
             
             Console.CursorVisible = false;
 
+
             while (board != null)
             {
                 board.Draw();
                 Thread.Sleep(10);
-                cell.CreateBlock(2, 1);
-                cell.CreateBlock(2, 2);
-                cell.CreateBlock(2, 3);
-                cell.CreateBlock(2, 4);
-                cell.CreateBlock(2, 5);
-                cell.CreateBlock(2, 6);
+                cell.CreateBlock(1,1);
+                cell.CreateBlock(1, 2);
+                cell.CreateBlock(1, 3);
+                cell.CreateBlock(1, 4);
+                cell.CreateBlock(1, 5);
+                cell.CreateBlock(1, 6);
+                cell.CreateBlock(1, 7);
+                cell.CreateBlock(1, 8);
             }
         }
     }
